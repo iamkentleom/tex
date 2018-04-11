@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>tex | A chatroom tailored just for you!</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width = device-width, initial-scale = 1">
+	<link rel="shortcut icon" type="image/x-icon" href="favicon.png">
+	<script src="https://www.gstatic.com/firebasejs/4.7.0/firebase.js"></script>
+	<script type="text/javascript">
+		var config = {
+		    apiKey: "AIzaSyAasm7FLZXQlTv6DhCEuJHugQZTOS7IhSU",
+		    authDomain: "another-9227b.firebaseapp.com",
+		    databaseURL: "https://another-9227b.firebaseio.com",
+		    projectId: "another-9227b",
+		    storageBucket: "another-9227b.appspot.com",
+		    messagingSenderId: "167383368743"
+			};
+		firebase.initializeApp(config);
+	</script>
+	<script src="custom.js"></script>
+</head>
+<body class="def-font">
+	<nav class="navbar fixed-top">
+	  <span class="navbar-brand mb-0 h1"><b>tex</b></span>
+	</nav>
+	<br><br><br><br><br><br>
+	<div class="container form">
+		<h1 class="text-center def-color">JOIN A CHATROOM</h1>
+		<div class="row d-none" id="alertCode">
+			<div class="col-xl-6 offset-xl-3 col-lg-6 offset-lg-3 col-md-6 offset-md-3 col-sm-8 offset-sm-2 col-12">
+				<div class="alert alert-success" id="code"></div>
+			</div>
+		</div>
+		<div class="row d-none" id="errorJoin">
+			<div class="col-xl-6 offset-xl-3 col-lg-6 offset-lg-3 col-md-6 offset-md-3 col-sm-8 offset-sm-2 col-12">
+				<div class="alert alert-danger"><i class="fa fa-warning"></i> Please fill up all the fields.</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xl-6 offset-xl-3 col-lg-6 offset-lg-3 col-md-6 offset-md-3 col-sm-8 offset-sm-2 col-12">
+				<div class="input-group">
+					<span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
+					<input id="displayName" class="form-control" placeholder="Display Name" required="" type="text">
+				</div>
+			</div>
+		</div>
+		<p></p>
+		<div class="row">
+			<div class="col-xl-6 offset-xl-3 col-lg-6 offset-lg-3 col-md-6 offset-md-3 col-sm-8 offset-sm-2 col-12">
+				<div class="input-group">
+					<span class="input-group-addon"><i class="fa fa-comments fa-fw"></i></span>
+					<input id="roomCode" class="form-control" placeholder="Chat Room Code" required="" type="text">
+					<span class="input-group-btn">
+						<button class="btn btn-primary" onclick="join()">Join</button>
+					</span>
+				</div>
+			</div>
+		</div><p></p>
+		<p class="text-center">Doesn't have a chatroom yet? <a href="#" onclick="createRoom()">Create a Chatroom</a></p>
+	</div>
+	<footer>
+		<div class="container">
+			<div class="row">
+				<div class="col-xl-12 col-lg-12">
+					<p>Copyright © 2017 AetherApps LLC. All Rights Reserved.</p>
+				</div>
+			</div>
+		</div>
+</footer>
+</body>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+<link href="https://fonts.googleapis.com/css?family=Dosis" rel="stylesheet">
+<link rel="stylesheet" href="custom.css">
+</html>

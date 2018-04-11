@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>tex | A chatroom tailored just for you!</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width = device-width, initial-scale = 1">
+	<link rel="shortcut icon" type="image/x-icon" href="favicon.png">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+	<link href="https://fonts.googleapis.com/css?family=Dosis" rel="stylesheet">
+</head>
+<body class="def-font">
+	<nav class="navbar fixed-top">
+	  <span class="navbar-brand mb-0 h1" id="chatRoomCode"></span>
+	  <button class="btn btn-danger my-2 my-sm-0" onclick="logOut()">Log Out <i class="fa fa-sign-out"></i></button>
+	</nav>
+	<br>
+	<div class="container">
+		<div class="row">
+				<div class="col-xl-6 offset-xl-3 col-lg-6 offset-lg-3 col-md-6 offset-md-3 col-sm-8 offset-sm-2 col-12">
+					<ol class="chat" id="textOne">
+					</ol>
+					<div class="drawer" id="uploadDrawer">
+						<div class="container">
+							<p></p>
+							<div class="progress">
+								<div id="uploadPercent" class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+							</div><p></p>
+							<input type="file" id="uploadFile" class="btn btn-default">
+						</div>
+					</div>
+					<div class="input-group sharp-edge fixed-bottom">
+						<span class="input-group-btn">
+							<button class="btn" onclick="drawer()"><i class="fa fa-plus fa-fw" id="btn-drawer"></i></button>
+						</span>
+						<input id="inputText" class="form-control" type="text" placeholder="Type a message..." onkeypress="checkEnter(event, this)">
+						<span class="input-group-btn">
+							<button id="sendData" class="btn btn-primary" onclick="sendOne()"><i class="fa fa-send fa-fw"></i></button>
+						</span>
+					</div>
+				</div>
+		</div>
+	</div>
+	<!-- 10-08-99 - iamkentleom -->
+	<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+	<script type="text/javascript">
+		var config = {
+		    apiKey: "AIzaSyAasm7FLZXQlTv6DhCEuJHugQZTOS7IhSU",
+		    authDomain: "another-9227b.firebaseapp.com",
+		    databaseURL: "https://another-9227b.firebaseio.com",
+		    projectId: "another-9227b",
+		    storageBucket: "another-9227b.appspot.com",
+		    messagingSenderId: "167383368743"
+			};
+		firebase.initializeApp(config);
+
+		var roomCode = sessionStorage.getItem('roomCode');
+		var displayName = sessionStorage.getItem('displayName');
+		document.getElementById('chatRoomCode').innerHTML = "Code : "+roomCode;
+
+		var database = firebase.database();
+
+		var messageRef = database.ref('chatRooms/'+roomCode);
+		messageRef.on('value', getData, errData);
+
+		function getData(data){
+			var messagesContent = data.val();
+			var keys = Object.keys(messagesContent);
+			var prevData = "";
+			for (var i = 0; i < keys.length; i++){
+				var dataArr = keys[i];
+				var messageContent = messagesContent[dataArr].message;
+				var owner = messagesContent[dataArr].name;
+				if(owner == displayName){
+					prevData = prevData + "<li class=\"self\"><div class=\"msg\"><p>"+messageContent+"</p></div></li>";
+				} else {
+					prevData = prevData + "<li class=\"other\"><div class=\"msg\"><p>"+messageContent+"</p></div></li>"
+				}
+				
+			}
+			textOne.innerHTML = prevData;
+			window.scrollTo(0, document.body.scrollHeight);
+		}
+		function errData(err){
+			console.log('Error!');
+			console.log(err);
+		}
+		function sendOne() {
+			var ref = database.ref('chatRooms/'+roomCode);
+			var inputText = document.getElementById('inputText').value;
+			var data = {
+				name : displayName,
+				message : inputText
+			}
+			if(inputText != ""){
+				ref.push(data);
+			document.getElementById('inputText').value = "";
+			}
+		}
+		function sendFile() {
+			var ref = database.ref('chatRooms/'+roomCode);
+			var inputText = "<a href=\"#\"><i class=\"fa fa-download\"></i> "+fileName+"</a>";
+			var data = {
+				name : displayName,
+				message : inputText
+			}
+			if(inputText != ""){
+				ref.push(data);
+			document.getElementById('inputText').value = "";
+			}
+		}
+		function logOut(){
+			window.location = 'index.html';
+			sessionStorage.clear();
+		}
+
+		var fileButton = document.getElementById('uploadFile');
+		var fileName = "";
+
+      	fileButton.addEventListener('change', function(e){
+          var file = e.target.files[0];
+          var storageRef = firebase.storage().ref(roomCode+'/'+file.name);
+          var uploadTask = storageRef.put(file);
+          uploadTask.on('state_changed',
+          	function progress(snapshot){
+          		var percentage = Math.floor((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+          		var progressElement = document.getElementById('uploadPercent');
+          		progressElement.style.width = percentage+"%";
+          	}
+          	);
+          fileName = file.name;
+          sendFile();
+      	});
+      	function drawer(){
+      		var height = document.getElementById('uploadDrawer').style.height
+      		if(height == "0px"){
+      			openDrawer();
+      			document.getElementById('btn-drawer').classList = "fa fa-times fa-fw";
+      		}
+      		else{
+      			closeDrawer();
+      			document.getElementById('btn-drawer').classList = "fa fa-plus fa-fw";
+      		}
+      	}
+      	function openDrawer(){
+      		document.getElementById('uploadDrawer').style.height = "150px";
+      	}
+      	function closeDrawer(){
+      		document.getElementById('uploadDrawer').style.height = "0";
+      	}
+      	function checkEnter(e, text){
+      		var code = (e.keyCode ? e.keyCode : e.which);
+				if(code == 13) {
+				    sendOne();
+				}
+      	}
+	</script>
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="custom.css">
+</body>
+</html>
